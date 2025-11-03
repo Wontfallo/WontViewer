@@ -458,7 +458,7 @@
             word-break: break-all; /* Break long words/strings */
             color: #0f0; /* Match body text */
         }
-
+        
         .metadata-overlay {
             position: fixed;
             top: 0;
@@ -943,6 +943,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // DOM Elements
             const fileInput = document.getElementById('file-input');
+            
             const folderInput = document.getElementById('folder-input');
             const openFilesBtn = document.getElementById('open-files-btn');
             const openFolderBtn = document.getElementById('open-folder-btn');
@@ -1030,11 +1031,23 @@
                     loadSettings();
                     
                     // Basic event listeners
-                    openFilesBtn.onclick = () => fileInput.click();
-                    openFolderBtn.onclick = () => folderInput.click();
+                    if (openFilesBtn) {
+                        console.log("openFilesBtn:", openFilesBtn);
+                        openFilesBtn.onclick = () => fileInput.click();
+                    }
+                    if (openFolderBtn) {
+                        console.log("openFolderBtn:", openFolderBtn);
+                        openFolderBtn.onclick = () => folderInput.click();
+                    }
                     
-                    fileInput.onchange = handleFileSelection;
-                    folderInput.onchange = handleFileSelection;
+                    if (fileInput) {
+                        console.log("fileInput:", fileInput);
+                        fileInput.onchange = handleFileSelection;
+                    }
+                    if (folderInput) {
+                        console.log("folderInput:", folderInput);
+                        folderInput.onchange = handleFileSelection;
+                    }
                     
                     // Navigation controls
                     if (prevBtn) prevBtn.onclick = goToPrevious;
@@ -1209,7 +1222,6 @@
             saveSettingsBtn.addEventListener('click', saveSettings);
             settingsOverlay.addEventListener('click', closeSettings);
             
-
             
             // Matrix rain toggle
             matrixRainToggle.addEventListener('change', (e) => {
@@ -1398,61 +1410,14 @@
             
             function goToPrevious() {
                 if (mediaFiles.length === 0) return;
-
-                let prevIndex = currentIndex;
-                let attempts = 0;
-                const maxAttempts = mediaFiles.length;
-
-                do {
-                    prevIndex = (prevIndex - 1 + mediaFiles.length) % mediaFiles.length;
-                    attempts++;
-                    // Stop if we've looped through all files or found an image (or if not skipping videos)
-                    if (attempts >= maxAttempts || !isSlideshowRunning || !skipVideosInSlideshow || mediaFiles[prevIndex].type.startsWith('image/')) {
-                        break;
-                    }
-                } while (true);
-
-                // Only update if we found a valid index (prevents infinite loop if only videos exist and skipping is on)
-                if (attempts < maxAttempts || !mediaFiles[prevIndex].type.startsWith('video/')) {
-                   currentIndex = prevIndex;
-                   displayCurrentMedia();
-                } else if (isSlideshowRunning) {
-                    // If only videos exist and we're skipping, stop the slideshow
-                    stopSlideshow();
-                    showStatusMessage("Slideshow stopped: No images found to display.");
-                }
+                currentIndex = (currentIndex - 1 + mediaFiles.length) % mediaFiles.length;
+                displayCurrentMedia();
             }
             
             function goToNext() {
                 if (mediaFiles.length === 0) return;
-
-                // If slideshow is running and we should skip videos, use the complex logic
-                if (isSlideshowRunning && skipVideosInSlideshow) {
-                    let nextIndex = currentIndex;
-                    let attempts = 0;
-                    const maxAttempts = mediaFiles.length;
-
-                    do {
-                        nextIndex = (nextIndex + 1) % mediaFiles.length;
-                        attempts++;
-                        // Stop if we've looped through all files or found an image
-                        if (attempts >= maxAttempts || mediaFiles[nextIndex].type.startsWith('image/')) {
-                            break;
-                        }
-                    } while (true);
-
-                    if (attempts < maxAttempts) {
-                        currentIndex = nextIndex;
-                        displayCurrentMedia();
-                    } else {
-                        stopSlideshow();
-                        showStatusMessage("Slideshow stopped: No images found to display.");
-                    }
-                } else {
-                    // Simple navigation: just go to the next file
-                    currentIndex = (currentIndex + 1) % mediaFiles.length;
-                    displayCurrentMedia();
-                }
+                currentIndex = (currentIndex + 1) % mediaFiles.length;
+                displayCurrentMedia();
             }
             
             function zoomImage(factor) {
@@ -1539,6 +1504,8 @@
             }
 
             function stopPlayback() {
+                if (mediaFiles.length === 0) return;
+
                 if (isSlideshowRunning) {
                     stopSlideshow();
                 }
@@ -1925,7 +1892,7 @@
              function thumbnailDrag(e) {
                  if (!isDraggingThumbnails) return;
                  e.preventDefault(); // Prevent default drag behavior
-                 const x = e.pageX - thumbnailSidebar.offsetLeft;
+                 const x = e.pageX - thumbnailDragStartX;
                  const walk = (x - thumbnailDragStartX) * 1.5; // Multiplier for faster scroll
                  thumbnailSidebar.scrollLeft = thumbnailScrollLeftStart - walk;
              }
