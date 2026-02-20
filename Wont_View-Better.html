@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -447,7 +446,8 @@
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.3s ease;
-            border: 1px solid #0f0;
+            border: 1px solid #ff00aa;
+            color: #ff00aa;
             z-index: 10;
         }
 
@@ -852,24 +852,21 @@
 
         #thumbnail-container {
             display: grid;
-            /* Adaptive grid: min 240px as requested, max 3 columns. Using min() to ensuring it doesn't overflow if sidebar < 240px */
-            grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fill, 420px);
+            justify-content: center;
+            gap: 12px;
             align-content: start;
             padding-bottom: 2rem;
             width: 100%;
         }
 
         .thumbnail {
-            width: 100%;
-            padding-top: 100%;
-            /* Force square aspect ratio based on width */
+            width: 420px;
+            height: 420px;
+            flex-shrink: 0;
             position: relative;
-            /* Anchor for absolute positioned image */
             box-shadow: 0 0 5px rgba(0, 255, 0, 0.2);
             background: #111;
-            height: 0;
-            /* Let padding define height */
             overflow: hidden;
         }
 
@@ -922,7 +919,7 @@
 </head>
 
 <body
-    class="flex h-screen w-screen overflow-hidden bg-black text-cyber-primary font-cyber selection:bg-cyber-accent selection:text-white">
+    class="flex h-screen w-full overflow-hidden bg-black text-cyber-primary font-cyber selection:bg-cyber-accent selection:text-white">
     <!-- Matrix Rain Canvas -->
     <canvas id="matrix-rain"></canvas>
     <div class="scanline pointer-events-none z-50"></div>
@@ -1008,9 +1005,24 @@
         <!-- Sidebar -->
         <aside id="thumbnail-sidebar"
             class="relative w-64 bg-black border-r border-cyber-primary flex flex-col flex-shrink-0 transition-width duration-0">
-            <div class="p-2 border-b border-cyber-primary flex justify-between items-center bg-cyber-darker">
-                <span class="text-sm font-bold text-cyber-accent tracking-wider">LIB//PRO</span>
-                <span id="sidebar-count" class="text-xs text-cyber-secondary">0 FILES</span>
+            <div class="p-2 border-b border-cyber-primary flex flex-col gap-2 bg-cyber-darker relative">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-sm font-bold text-cyber-accent tracking-wider">LIB//PRO</span>
+                        <span id="sidebar-count" class="text-[10px] text-cyber-secondary">0 FILES</span>
+                    </div>
+                </div>
+                <!-- Sort Dropdown ALWAYS VISIBLE -->
+                <select id="sort-select"
+                    class="w-full bg-black border border-cyber-accent text-xs rounded px-2 py-1 text-cyber-accent focus:outline-none focus:ring-1 focus:ring-cyber-accent shadow-cyber cursor-pointer">
+                    <option value="name_asc" selected>Sort: Name (A-Z)</option>
+                    <option value="name_desc">Sort: Name (Z-A)</option>
+                    <option value="date_desc">Sort: Newest</option>
+                    <option value="date_asc">Sort: Oldest</option>
+                    <option value="size_desc">Sort: Largest</option>
+                    <option value="size_asc">Sort: Smallest</option>
+                    <option value="type_asc">Sort: Type</option>
+                </select>
             </div>
 
             <div id="thumbnail-container" class="flex-1 overflow-y-auto p-2 bg-black">
@@ -1022,12 +1034,12 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col relative min-w-0 bg-black/95 backdrop-blur-sm">
+        <main class="flex-1 flex flex-col relative min-w-0 overflow-hidden bg-black/95 backdrop-blur-sm">
             <!-- Header -->
             <header id="main-header"
                 class="flex justify-between items-center p-3 border-b border-cyber-primary/30 bg-cyber-dark/80 z-30">
                 <div class="glitch-effect" data-text="WONTV1EW L33T">
-                    <h1 class="text-2xl font-bold cyber-text">WONTV1EW <span
+                    <h1 class="text-2xl font-bold cyber-text">WONTV<span class="text-cyber-accent">1</span>EW <span
                             class="text-xs text-cyber-secondary align-middle">v2.0</span></h1>
                 </div>
 
@@ -1089,10 +1101,10 @@
 
                 <!-- Navigation Arrows -->
                 <button id="prev-btn"
-                    class="absolute left-4 top-1/2 -translate-y-1/2 nav-arrow p-4 hover:text-cyber-accent z-40 opacity-50 hover:opacity-100 transition-opacity"><i
+                    class="absolute left-4 top-1/2 -translate-y-1/2 nav-arrow p-4 hover:text-cyber-dark hover:bg-cyber-accent z-40 opacity-50 hover:opacity-100 transition-opacity"><i
                         class="fas fa-chevron-left text-4xl"></i></button>
                 <button id="next-btn"
-                    class="absolute right-4 top-1/2 -translate-y-1/2 nav-arrow p-4 hover:text-cyber-accent z-40 opacity-50 hover:opacity-100 transition-opacity"><i
+                    class="absolute right-4 top-1/2 -translate-y-1/2 nav-arrow p-4 hover:text-cyber-dark hover:bg-cyber-accent z-40 opacity-50 hover:opacity-100 transition-opacity"><i
                         class="fas fa-chevron-right text-4xl"></i></button>
             </div>
 
@@ -1124,7 +1136,7 @@
                         <div class="flex items-center space-x-2 text-xs">
                             <i class="fas fa-volume-down text-cyber-secondary"></i>
                             <input type="range" id="volume-slider"
-                                class="w-16 accent-cyber-primary h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer"
+                                class="w-16 h-1 bg-gray-800 rounded-lg appearance-none cursor-pointer accent-cyber-accent"
                                 min="0" max="1" step="0.05" value="1">
                         </div>
                     </div>
@@ -1137,8 +1149,12 @@
                             <button id="view-metadata-btn" class="hidden text-cyber-accent hover:text-white"><i
                                     class="fas fa-info-circle"></i></button>
                         </div>
+                        <div class="flex flex-col items-center">
+                            <span id="media-dimensions" class="text-cyber-accent">Dimensions: 0 x 0</span>
+                            <span id="zoom-indicator"
+                                class="text-cyber-accent text-sm mt-0.5 ml-2 font-bold opacity-80">100%</span>
+                        </div>
                         <div class="flex space-x-4 mt-1 text-[10px] text-cyber-secondary/70">
-                            <span id="media-dimensions"></span>
                             <div id="status-message" class="text-cyber-accent animate-pulse font-bold"></div>
                         </div>
                         <!-- Hidden elements for script compatibility -->
@@ -1180,10 +1196,9 @@
                         <div class="h-4 w-px bg-cyber-primary/30 mx-1"></div>
 
                         <select id="image-size"
-                            class="bg-black border border-cyber-primary text-xs rounded px-1 py-0.5 text-cyber-primary focus:outline-none">
+                            class="bg-black border border-cyber-accent text-xs rounded px-1 py-0.5 text-cyber-accent focus:outline-none focus:ring-1 focus:ring-cyber-accent">
                             <option value="contain">FIT</option>
-                            <option value="cover">FILL</option>
-                            <option value="original">1:1</option>
+                            <option value="original">ORIGINAL</option>
                         </select>
 
                         <button id="toggle-sidebar"
@@ -1228,6 +1243,7 @@
             const thumbnailContainer = document.getElementById('thumbnail-container');
             const thumbnailSidebar = document.getElementById('thumbnail-sidebar');
             const sidebarCount = document.getElementById('sidebar-count');
+            const sortSelect = document.getElementById('sort-select');
             const prevBtn = document.getElementById('prev-btn');
             const nextBtn = document.getElementById('next-btn');
             const prevBottomBtn = document.getElementById('prev-bottom');
@@ -1461,7 +1477,18 @@
                 if (mediaFiles.length > 0) {
                     applyImageSize();
                 }
+                imageSizeSelect.blur();
             });
+
+            // Sorting Controls
+            if (sortSelect) {
+                sortSelect.addEventListener('change', () => {
+                    if (mediaFiles.length > 0) {
+                        sortMediaFiles(sortSelect.value);
+                    }
+                    sortSelect.blur();
+                });
+            }
 
             // Fullscreen controls
             toggleFullscreenBtn.addEventListener('click', toggleFullScreen);
@@ -1520,13 +1547,41 @@
                     mediaFiles = files.filter(file =>
                         file.type.startsWith('image/') || file.type.startsWith('video/')
                     );
-                    currentIndex = 0;
-                    displayCurrentMedia();
-                    updateThumbnails();
-                    showStatusMessage(`LOADED ${mediaFiles.length} FILES`);
-                    if (sidebarCount) sidebarCount.textContent = `${mediaFiles.length} FILES`;
+                    if (sortSelect) {
+                        sortMediaFiles(sortSelect.value); // Automatically sorts and triggers redraw
+                    } else {
+                        currentIndex = 0;
+                        displayCurrentMedia();
+                        updateThumbnails();
+                        showStatusMessage(`LOADED ${mediaFiles.length} FILES`);
+                        if (sidebarCount) sidebarCount.textContent = `${mediaFiles.length} FILES`;
+                    }
                 }
                 e.target.value = ''; // Reset input to allow selecting same files again
+            }
+
+            function sortMediaFiles(algorithm) {
+                if (mediaFiles.length === 0) return;
+
+                mediaFiles.sort((a, b) => {
+                    switch (algorithm) {
+                        case 'name_asc': return a.name.localeCompare(b.name);
+                        case 'name_desc': return b.name.localeCompare(a.name);
+                        case 'size_asc': return a.size - b.size;
+                        case 'size_desc': return b.size - a.size;
+                        case 'date_asc': return a.lastModified - b.lastModified;
+                        case 'date_desc': return b.lastModified - a.lastModified;
+                        case 'type_asc': return a.type.localeCompare(b.type);
+                        case 'type_desc': return b.type.localeCompare(a.type);
+                        default: return 0;
+                    }
+                });
+
+                currentIndex = 0; // Reset back to first item after sort
+                displayCurrentMedia();
+                updateThumbnails();
+                showStatusMessage('FILES SORTED');
+                if (sidebarCount) sidebarCount.textContent = `${mediaFiles.length} FILES`;
             }
 
             function displayCurrentMedia() {
@@ -1716,6 +1771,7 @@
                 const imageWrapper = document.getElementById('image-wrapper');
 
                 imageWrapper.style.transform = `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)`;
+                updateZoomIndicator();
             }
 
             function resetZoom() {
@@ -1727,6 +1783,18 @@
                 const imageWrapper = document.getElementById('image-wrapper');
 
                 imageWrapper.style.transform = `scale(${zoomLevel}) translate(${translateX}px, ${translateY}px)`;
+                updateZoomIndicator();
+            }
+
+            function updateZoomIndicator() {
+                const indicator = document.getElementById('zoom-indicator');
+                if (indicator) {
+                    if (mediaFiles.length === 0 || !mediaFiles[currentIndex]?.type.startsWith('image/')) {
+                        indicator.textContent = '';
+                    } else {
+                        indicator.textContent = Math.round(zoomLevel * 100) + '%';
+                    }
+                }
             }
 
             function applyImageSize() {
@@ -1742,11 +1810,6 @@
                         img.style.height = 'auto';
                         img.style.maxWidth = '100%';
                         img.style.maxHeight = '100%';
-                        break;
-                    case 'cover':
-                        img.style.objectFit = 'cover';
-                        img.style.width = '100%';
-                        img.style.height = '100%';
                         break;
                     case 'original':
                         img.style.objectFit = 'none';
@@ -1830,15 +1893,14 @@
                 toggleSlideshowBtn.classList.remove('bg-cyber-dark');
                 toggleSlideshowBtn.classList.add('bg-cyber-accent', 'text-cyber-dark');
 
+                // Interval is strictly determined by the selected speed
                 slideshowBaseSpeed = parseInt(slideshowSpeedSelect.value);
-                // Calculate actual interval: base / speed (Higher speed = Lower interval)
-                // Limit speed influence to avoid 0 interval
-                const interval = Math.max(100, slideshowBaseSpeed / playbackSpeed);
+                const interval = slideshowBaseSpeed;
 
                 clearInterval(slideshowInterval); // Clear any existing
                 slideshowInterval = setInterval(goToNext, interval);
 
-                showStatusMessage(`SLIDESHOW STARTED (${playbackSpeed.toFixed(1)}x)`);
+                showStatusMessage(`SLIDESHOW STARTED (${(interval / 1000).toFixed(1)}s)`);
             }
 
             function stopSlideshow() {
@@ -1858,13 +1920,13 @@
             function handleWheelEvent(e) {
                 e.preventDefault();
 
-                if (wheelBehavior === 'zoom' && mediaFiles[currentIndex]?.type.startsWith('image/')) {
-                    // Zoom with wheel
+                if (e.ctrlKey && mediaFiles[currentIndex]?.type.startsWith('image/')) {
+                    // Zoom with Ctrl + Wheel
                     const delta = -e.deltaY;
                     const factor = delta > 0 ? 1.1 : 0.9;
                     zoomImage(factor);
-                } else if (wheelBehavior === 'navigate') {
-                    // Navigate with wheel
+                } else {
+                    // Navigate with standard mouse wheel scrolling
                     if (e.deltaY > 0) {
                         goToNext();
                     } else {
@@ -1902,11 +1964,21 @@
                 if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
 
                 switch (e.key) {
-                    case 'ArrowLeft':
+                    case 'ArrowUp':
                         goToPrevious();
                         break;
-                    case 'ArrowRight':
+                    case 'ArrowDown':
                         goToNext();
+                        break;
+                    case 'ArrowLeft':
+                        if (mediaFiles[currentIndex]?.type.startsWith('video/')) {
+                            currentVideo.currentTime = Math.max(0, currentVideo.currentTime - 10);
+                        }
+                        break;
+                    case 'ArrowRight':
+                        if (mediaFiles[currentIndex]?.type.startsWith('video/')) {
+                            currentVideo.currentTime = Math.min(currentVideo.duration, currentVideo.currentTime + 10);
+                        }
                         break;
                     case '+':
                     case '=':
@@ -1920,18 +1992,11 @@
                         resetZoom();
                         break;
                     case ' ':
-                        togglePlayPause();
-                        break;
-                    case 'ArrowUp':
+                        e.preventDefault(); // prevent page scrolling
                         if (mediaFiles[currentIndex]?.type.startsWith('video/')) {
-                            currentVideo.volume = Math.min(1, currentVideo.volume + 0.1);
-                            volumeSlider.value = currentVideo.volume;
-                        }
-                        break;
-                    case 'ArrowDown':
-                        if (mediaFiles[currentIndex]?.type.startsWith('video/')) {
-                            currentVideo.volume = Math.max(0, currentVideo.volume - 0.1);
-                            volumeSlider.value = currentVideo.volume;
+                            togglePlayPause();
+                        } else {
+                            toggleSlideshow();
                         }
                         break;
                     case '[':
